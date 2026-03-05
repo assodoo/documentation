@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manageo - Tableau de bord</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/modules.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">M</span>
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" data-page="dashboard">
+                <a href="#dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="crm">
+                <a href="#crm">
+                    <i class="fas fa-handshake"></i>
+                    <span>CRM</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="sms">
+                <a href="#sms">
+                    <i class="fas fa-comment-sms"></i>
+                    <span>SMS</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="stock">
+                <a href="#stock">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Stock</span>
+                </a>
+            </li>
+            <li class="menu-item has-submenu" data-page="ventes">
+                <a href="#ventes">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Ventes</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#" data-subpage="precommandes">Pre-commandes</a></li>
+                    <li><a href="#" data-subpage="devis">Devis</a></li>
+                    <li><a href="#" data-subpage="commandes">Commandes</a></li>
+                    <li><a href="#" data-subpage="bons-livraison">Bons de livraison</a></li>
+                    <li><a href="#" data-subpage="factures-ventes">Factures</a></li>
+                    <li><a href="#" data-subpage="bons-retour-ventes">Bons de retour</a></li>
+                    <li><a href="#" data-subpage="avoirs-ventes">Avoirs</a></li>
+                    <li><a href="#" data-subpage="releves-ventes">Releves</a></li>
+                    <li><a href="#" data-subpage="factures-recurrentes">Factures recurrentes</a></li>
+                    <li><a href="#" data-subpage="rapports-ventes">Rapports</a></li>
+                </ul>
+            </li>
+            <li class="menu-item has-submenu" data-page="achats">
+                <a href="#achats">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Achats</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#" data-subpage="assistant-commande">Assistant commande</a></li>
+                    <li><a href="#" data-subpage="demandes-prix">Demandes de prix</a></li>
+                    <li><a href="#" data-subpage="bons-commande">Bons de commande</a></li>
+                    <li><a href="#" data-subpage="bons-reception">Bons de reception</a></li>
+                    <li><a href="#" data-subpage="factures-achats">Factures</a></li>
+                    <li><a href="#" data-subpage="bons-retour-achats">Bons de retour</a></li>
+                    <li><a href="#" data-subpage="avoirs-achats">Avoirs</a></li>
+                    <li><a href="#" data-subpage="releves-achats">Releves</a></li>
+                    <li><a href="#" data-subpage="rapports-achats">Rapports</a></li>
+                </ul>
+            </li>
+            <li class="menu-item" data-page="finance">
+                <a href="#finance">
+                    <i class="fas fa-euro-sign"></i>
+                    <span>Finance</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="catalogue">
+                <a href="#catalogue">
+                    <i class="fas fa-book"></i>
+                    <span>Catalogue</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="comptabilite">
+                <a href="#comptabilite">
+                    <i class="fas fa-calculator"></i>
+                    <span>Comptabilite</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="rh">
+                <a href="#rh">
+                    <i class="fas fa-user-tie"></i>
+                    <span>RH</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="collaborateurs">
+                <a href="#collaborateurs">
+                    <i class="fas fa-users"></i>
+                    <span>Collaborateurs</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="manageo">
+                <a href="#manageo">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Manageo</span>
+                </a>
+            </li>
+            <li class="menu-item" data-page="reglages">
+                <a href="#reglages">
+                    <i class="fas fa-cog"></i>
+                    <span>Reglages</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <span class="breadcrumb-icon"><i class="fas fa-home"></i></span>
+                <span class="breadcrumb-separator">&rsaquo;</span>
+                <span class="breadcrumb-text" id="breadcrumb-text">Tableau de bord</span>
+            </div>
+            <div class="top-bar-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher..." id="global-search">
+                </div>
+                <div class="notification-badge" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3340</span>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn-icon" title="Rafraichir"><i class="fas fa-sync-alt"></i></button>
+                    <button class="btn-icon" title="Applications"><i class="fas fa-th"></i></button>
+                </div>
+                <div class="user-avatar" id="user-menu-btn">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Company Header -->
+        <div class="company-header">
+            <h1 class="company-name" id="company-name">PRODIGE PHARM...</h1>
+            <div class="company-actions">
+                <button class="btn btn-outline" id="btn-customize">
+                    <i class="fas fa-palette"></i> Personnaliser
+                </button>
+            </div>
+        </div>
+
+        <!-- Page Container -->
+        <div id="page-container">
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="page active">
+                <div class="dashboard-grid">
+                    <!-- Chiffre d'affaires -->
+                    <div class="card card-ca">
+                        <div class="card-header-ca">
+                            <h3>Chiffre d'affaires</h3>
+                            <div class="ca-amount" id="ca-total">129 803 140</div>
+                        </div>
+                        <div class="quarter-tabs">
+                            <button class="quarter-tab active" data-quarter="1">T 1</button>
+                            <button class="quarter-tab" data-quarter="2">T 2</button>
+                            <button class="quarter-tab" data-quarter="3">T 3</button>
+                            <button class="quarter-tab" data-quarter="4">T 4</button>
+                        </div>
+                        <div class="ca-details">
+                            <div class="ca-row">
+                                <span class="ca-label">CA</span>
+                                <span class="ca-value blue" id="ca-value">129 803 140</span>
+                            </div>
+                            <div class="ca-row">
+                                <span class="ca-label"></span>
+                                <span class="ca-value orange">154 662 609</span>
+                            </div>
+                            <div class="ca-row">
+                                <span class="ca-label"></span>
+                                <span class="ca-value green">105 642 026</span>
+                            </div>
+                            <div class="ca-row">
+                                <span class="ca-label"></span>
+                                <span class="ca-value red">49 020 583</span>
+                            </div>
+                            <div class="ca-row">
+                                <span class="ca-label"></span>
+                                <span class="ca-value cyan">56 018 487</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Devis a relancer -->
+                    <div class="card card-devis">
+                        <h3>Devis a relancer</h3>
+                        <div class="devis-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total TTC</span>
+                                <span class="stat-value blue" id="devis-total">61 809 875</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Nombre</span>
+                                <span class="stat-value orange" id="devis-count">11</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Les dernieres factures -->
+                    <div class="card card-factures">
+                        <h3>Les dernieres factures</h3>
+                        <div class="factures-list" id="factures-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Creances -->
+                    <div class="card card-creances">
+                        <h3>Creances</h3>
+                        <div class="devis-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total TTC</span>
+                                <span class="stat-value blue" id="creances-total">503 724 112</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Echues</span>
+                                <span class="stat-value orange" id="creances-echues">91%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dettes -->
+                    <div class="card card-dettes">
+                        <h3>Dettes</h3>
+                        <div class="devis-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total</span>
+                                <span class="stat-value blue" id="dettes-total">249 561 478</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Echues</span>
+                                <span class="stat-value red" id="dettes-echues">99%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section -->
+                <div class="dashboard-bottom">
+                    <div class="card card-half">
+                        <div class="card-header-flex">
+                            <h3>Devis a relancer</h3>
+                            <button class="btn-icon"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="devis-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Montant TTC</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="devis-table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card card-half">
+                        <div class="card-header-flex">
+                            <h3>Commandes a facturer</h3>
+                            <button class="btn-icon"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="commandes-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Montant TTC</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commandes-table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRM Page -->
+            <div id="page-crm" class="page">
+                <div class="module-header">
+                    <h2>CRM - Gestion de la Relation Client</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('crm')">
+                        <i class="fas fa-plus"></i> Nouveau contact
+                    </button>
+                </div>
+                <div class="pipeline-board" id="crm-pipeline">
+                    <div class="pipeline-column" data-stage="prospect">
+                        <div class="pipeline-header">
+                            <h4>Prospects</h4>
+                            <span class="pipeline-count" id="count-prospect">0</span>
+                        </div>
+                        <div class="pipeline-cards" id="stage-prospect"></div>
+                    </div>
+                    <div class="pipeline-column" data-stage="qualification">
+                        <div class="pipeline-header">
+                            <h4>Qualification</h4>
+                            <span class="pipeline-count" id="count-qualification">0</span>
+                        </div>
+                        <div class="pipeline-cards" id="stage-qualification"></div>
+                    </div>
+                    <div class="pipeline-column" data-stage="proposition">
+                        <div class="pipeline-header">
+                            <h4>Proposition</h4>
+                            <span class="pipeline-count" id="count-proposition">0</span>
+                        </div>
+                        <div class="pipeline-cards" id="stage-proposition"></div>
+                    </div>
+                    <div class="pipeline-column" data-stage="negociation">
+                        <div class="pipeline-header">
+                            <h4>Negociation</h4>
+                            <span class="pipeline-count" id="count-negociation">0</span>
+                        </div>
+                        <div class="pipeline-cards" id="stage-negociation"></div>
+                    </div>
+                    <div class="pipeline-column" data-stage="gagne">
+                        <div class="pipeline-header">
+                            <h4>Gagne</h4>
+                            <span class="pipeline-count" id="count-gagne">0</span>
+                        </div>
+                        <div class="pipeline-cards" id="stage-gagne"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Page -->
+            <div id="page-stock" class="page">
+                <div class="module-header">
+                    <h2>Gestion de Stock</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('product')">
+                        <i class="fas fa-plus"></i> Nouveau produit
+                    </button>
+                </div>
+                <div class="stock-summary">
+                    <div class="summary-card">
+                        <i class="fas fa-boxes"></i>
+                        <div>
+                            <span class="summary-value" id="stock-total-products">0</span>
+                            <span class="summary-label">Produits</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-exclamation-triangle" style="color: #e74c3c"></i>
+                        <div>
+                            <span class="summary-value" id="stock-low">0</span>
+                            <span class="summary-label">Stock bas</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-arrow-up" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="stock-in">0</span>
+                            <span class="summary-label">Entrees</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-arrow-down" style="color: #e67e22"></i>
+                        <div>
+                            <span class="summary-value" id="stock-out">0</span>
+                            <span class="summary-label">Sorties</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3>Liste des produits</h3>
+                        <div class="table-actions">
+                            <input type="text" placeholder="Rechercher un produit..." class="search-input" id="stock-search">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Designation</th>
+                                    <th>Categorie</th>
+                                    <th>Quantite</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Valeur stock</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventes Page -->
+            <div id="page-ventes" class="page">
+                <div class="module-header">
+                    <h2>Ventes</h2>
+                    <div class="module-actions">
+                        <select id="ventes-view-select" class="select-input" onchange="App.loadVentesSubpage(this.value)">
+                            <option value="devis">Devis</option>
+                            <option value="commandes">Commandes</option>
+                            <option value="factures-ventes">Factures</option>
+                            <option value="bons-livraison">Bons de livraison</option>
+                            <option value="avoirs-ventes">Avoirs</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="App.showModal('vente')">
+                            <i class="fas fa-plus"></i> Nouveau
+                        </button>
+                    </div>
+                </div>
+                <div class="ventes-stats">
+                    <div class="summary-card">
+                        <i class="fas fa-file-alt" style="color: #3498db"></i>
+                        <div>
+                            <span class="summary-value" id="ventes-devis-count">0</span>
+                            <span class="summary-label">Devis</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-shopping-bag" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="ventes-commandes-count">0</span>
+                            <span class="summary-label">Commandes</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-file-invoice-dollar" style="color: #e67e22"></i>
+                        <div>
+                            <span class="summary-value" id="ventes-factures-count">0</span>
+                            <span class="summary-label">Factures</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-euro-sign" style="color: #8e44ad"></i>
+                        <div>
+                            <span class="summary-value" id="ventes-ca-total">0</span>
+                            <span class="summary-label">CA Total</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3 id="ventes-table-title">Devis</h3>
+                        <input type="text" placeholder="Rechercher..." class="search-input" id="ventes-search">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Client</th>
+                                    <th>Date</th>
+                                    <th>Montant HT</th>
+                                    <th>Montant TTC</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ventes-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achats Page -->
+            <div id="page-achats" class="page">
+                <div class="module-header">
+                    <h2>Achats</h2>
+                    <div class="module-actions">
+                        <select id="achats-view-select" class="select-input" onchange="App.loadAchatsSubpage(this.value)">
+                            <option value="demandes-prix">Demandes de prix</option>
+                            <option value="bons-commande">Bons de commande</option>
+                            <option value="factures-achats">Factures</option>
+                            <option value="bons-reception">Bons de reception</option>
+                            <option value="avoirs-achats">Avoirs</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="App.showModal('achat')">
+                            <i class="fas fa-plus"></i> Nouveau
+                        </button>
+                    </div>
+                </div>
+                <div class="ventes-stats">
+                    <div class="summary-card">
+                        <i class="fas fa-file-alt" style="color: #3498db"></i>
+                        <div>
+                            <span class="summary-value" id="achats-demandes-count">0</span>
+                            <span class="summary-label">Demandes de prix</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-clipboard-list" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="achats-bons-count">0</span>
+                            <span class="summary-label">Bons de commande</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-file-invoice" style="color: #e67e22"></i>
+                        <div>
+                            <span class="summary-value" id="achats-factures-count">0</span>
+                            <span class="summary-label">Factures</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-euro-sign" style="color: #e74c3c"></i>
+                        <div>
+                            <span class="summary-value" id="achats-total">0</span>
+                            <span class="summary-label">Total achats</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3 id="achats-table-title">Demandes de prix</h3>
+                        <input type="text" placeholder="Rechercher..." class="search-input" id="achats-search">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Fournisseur</th>
+                                    <th>Date</th>
+                                    <th>Montant HT</th>
+                                    <th>Montant TTC</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="achats-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finance Page -->
+            <div id="page-finance" class="page">
+                <div class="module-header">
+                    <h2>Finance</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('transaction')">
+                        <i class="fas fa-plus"></i> Nouvelle transaction
+                    </button>
+                </div>
+                <div class="finance-summary">
+                    <div class="summary-card card-green">
+                        <i class="fas fa-arrow-circle-down" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="finance-encaissements">0</span>
+                            <span class="summary-label">Encaissements</span>
+                        </div>
+                    </div>
+                    <div class="summary-card card-red">
+                        <i class="fas fa-arrow-circle-up" style="color: #e74c3c"></i>
+                        <div>
+                            <span class="summary-value" id="finance-decaissements">0</span>
+                            <span class="summary-label">Decaissements</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-balance-scale" style="color: #3498db"></i>
+                        <div>
+                            <span class="summary-value" id="finance-solde">0</span>
+                            <span class="summary-label">Solde</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-university" style="color: #8e44ad"></i>
+                        <div>
+                            <span class="summary-value" id="finance-tresorerie">0</span>
+                            <span class="summary-label">Tresorerie</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3>Transactions recentes</h3>
+                        <input type="text" placeholder="Rechercher..." class="search-input" id="finance-search">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Montant</th>
+                                    <th>Solde</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finance-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catalogue Page -->
+            <div id="page-catalogue" class="page">
+                <div class="module-header">
+                    <h2>Catalogue Produits</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('catalogue')">
+                        <i class="fas fa-plus"></i> Nouveau produit
+                    </button>
+                </div>
+                <div class="catalogue-filters">
+                    <input type="text" placeholder="Rechercher un produit..." class="search-input" id="catalogue-search">
+                    <select class="select-input" id="catalogue-category-filter">
+                        <option value="">Toutes les categories</option>
+                    </select>
+                </div>
+                <div class="catalogue-grid" id="catalogue-grid">
+                </div>
+            </div>
+
+            <!-- Comptabilite Page -->
+            <div id="page-comptabilite" class="page">
+                <div class="module-header">
+                    <h2>Comptabilite</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('ecriture')">
+                        <i class="fas fa-plus"></i> Nouvelle ecriture
+                    </button>
+                </div>
+                <div class="ventes-stats">
+                    <div class="summary-card">
+                        <i class="fas fa-book" style="color: #3498db"></i>
+                        <div>
+                            <span class="summary-value" id="compta-journal-count">0</span>
+                            <span class="summary-label">Ecritures</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-arrow-down" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="compta-debit">0</span>
+                            <span class="summary-label">Total Debit</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-arrow-up" style="color: #e74c3c"></i>
+                        <div>
+                            <span class="summary-value" id="compta-credit">0</span>
+                            <span class="summary-label">Total Credit</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3>Journal des ecritures</h3>
+                        <input type="text" placeholder="Rechercher..." class="search-input" id="compta-search">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>N. Piece</th>
+                                    <th>Compte</th>
+                                    <th>Libelle</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="compta-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RH Page -->
+            <div id="page-rh" class="page">
+                <div class="module-header">
+                    <h2>Ressources Humaines</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('employe')">
+                        <i class="fas fa-plus"></i> Nouvel employe
+                    </button>
+                </div>
+                <div class="ventes-stats">
+                    <div class="summary-card">
+                        <i class="fas fa-users" style="color: #3498db"></i>
+                        <div>
+                            <span class="summary-value" id="rh-effectif">0</span>
+                            <span class="summary-label">Effectif total</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-user-check" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="rh-presents">0</span>
+                            <span class="summary-label">Presents</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-user-clock" style="color: #e67e22"></i>
+                        <div>
+                            <span class="summary-value" id="rh-conges">0</span>
+                            <span class="summary-label">En conge</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-money-bill-wave" style="color: #8e44ad"></i>
+                        <div>
+                            <span class="summary-value" id="rh-masse-salariale">0</span>
+                            <span class="summary-label">Masse salariale</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3>Liste des employes</h3>
+                        <input type="text" placeholder="Rechercher..." class="search-input" id="rh-search">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom complet</th>
+                                    <th>Poste</th>
+                                    <th>Departement</th>
+                                    <th>Date embauche</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rh-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collaborateurs Page -->
+            <div id="page-collaborateurs" class="page">
+                <div class="module-header">
+                    <h2>Collaborateurs</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('collaborateur')">
+                        <i class="fas fa-plus"></i> Nouveau collaborateur
+                    </button>
+                </div>
+                <div class="collaborateurs-grid" id="collaborateurs-grid">
+                </div>
+            </div>
+
+            <!-- SMS Page -->
+            <div id="page-sms" class="page">
+                <div class="module-header">
+                    <h2>SMS Marketing</h2>
+                    <button class="btn btn-primary" onclick="App.showModal('sms')">
+                        <i class="fas fa-plus"></i> Nouvelle campagne
+                    </button>
+                </div>
+                <div class="ventes-stats">
+                    <div class="summary-card">
+                        <i class="fas fa-paper-plane" style="color: #3498db"></i>
+                        <div>
+                            <span class="summary-value" id="sms-envoyes">0</span>
+                            <span class="summary-label">SMS envoyes</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-check-circle" style="color: #27ae60"></i>
+                        <div>
+                            <span class="summary-value" id="sms-delivres">0</span>
+                            <span class="summary-label">Delivres</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-clock" style="color: #e67e22"></i>
+                        <div>
+                            <span class="summary-value" id="sms-en-attente">0</span>
+                            <span class="summary-label">En attente</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-coins" style="color: #8e44ad"></i>
+                        <div>
+                            <span class="summary-value" id="sms-credits">0</span>
+                            <span class="summary-label">Credits restants</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header-flex">
+                        <h3>Campagnes SMS</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Date</th>
+                                    <th>Destinataires</th>
+                                    <th>Envoyes</th>
+                                    <th>Delivres</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sms-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manageo Page -->
+            <div id="page-manageo" class="page">
+                <div class="module-header">
+                    <h2>Manageo - Profil Entreprise</h2>
+                </div>
+                <div class="card" style="max-width: 800px;">
+                    <h3>Informations de l'entreprise</h3>
+                    <form id="company-form" class="form-grid">
+                        <div class="form-group">
+                            <label>Raison sociale</label>
+                            <input type="text" id="company-raison" value="PRODIGE PHARMA SA" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>RCCM</label>
+                            <input type="text" id="company-rccm" value="" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>NIF</label>
+                            <input type="text" id="company-nif" value="" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Adresse</label>
+                            <input type="text" id="company-adresse" value="" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Telephone</label>
+                            <input type="text" id="company-tel" value="" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="company-email" value="" class="form-input">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" onclick="App.saveCompanyInfo()">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reglages Page -->
+            <div id="page-reglages" class="page">
+                <div class="module-header">
+                    <h2>Reglages</h2>
+                </div>
+                <div class="settings-grid">
+                    <div class="card settings-card">
+                        <h3><i class="fas fa-building"></i> Entreprise</h3>
+                        <p>Configurer les informations de votre entreprise</p>
+                        <button class="btn btn-outline" onclick="App.navigateTo('manageo')">Configurer</button>
+                    </div>
+                    <div class="card settings-card">
+                        <h3><i class="fas fa-users"></i> Utilisateurs</h3>
+                        <p>Gerer les utilisateurs et les droits d'acces</p>
+                        <button class="btn btn-outline">Configurer</button>
+                    </div>
+                    <div class="card settings-card">
+                        <h3><i class="fas fa-file-invoice"></i> Facturation</h3>
+                        <p>Parametres de facturation et modeles</p>
+                        <button class="btn btn-outline">Configurer</button>
+                    </div>
+                    <div class="card settings-card">
+                        <h3><i class="fas fa-percent"></i> Taxes</h3>
+                        <p>Configurer les taux de TVA et taxes</p>
+                        <button class="btn btn-outline">Configurer</button>
+                    </div>
+                    <div class="card settings-card">
+                        <h3><i class="fas fa-money-bill"></i> Devises</h3>
+                        <p>Gerer les devises et taux de change</p>
+                        <button class="btn btn-outline">Configurer</button>
+                    </div>
+                    <div class="card settings-card">
+                        <h3><i class="fas fa-print"></i> Impression</h3>
+                        <p>Configurer les modeles d'impression</p>
+                        <button class="btn btn-outline">Configurer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay" onclick="App.closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modal-title">Nouveau</h3>
+                <button class="btn-icon" onclick="App.closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="App.closeModal()">Annuler</button>
+                <button class="btn btn-primary" id="modal-save-btn" onclick="App.saveModal()">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

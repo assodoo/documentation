@@ -1,0 +1,252 @@
+/* ===== DASHBOARD GRID ===== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+/* CA Card - spans first column, 2 rows */
+.card-ca {
+    grid-row: 1 / 3;
+    grid-column: 1;
+}
+
+.card-header-ca {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: #fff;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 20px;
+    margin: -20px -20px 16px -20px;
+    text-align: center;
+}
+
+.card-header-ca h3 {
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.ca-amount {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.quarter-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.quarter-tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: #f0f2f5;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.quarter-tab.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+.quarter-tab:hover:not(.active) {
+    background: #e0e0e0;
+}
+
+.ca-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ca-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.ca-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.ca-value {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.ca-value.blue { color: var(--blue); }
+.ca-value.orange { color: var(--orange); }
+.ca-value.green { color: var(--green); }
+.ca-value.red { color: var(--red); }
+.ca-value.cyan { color: var(--cyan); }
+
+/* Devis card */
+.card-devis {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+/* Factures card */
+.card-factures {
+    grid-column: 3;
+    grid-row: 1 / 3;
+}
+
+/* Creances card */
+.card-creances {
+    grid-column: 2;
+    grid-row: 2;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+
+.card-creances h3 { color: #1565c0; }
+
+/* Dettes card */
+.card-dettes {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+
+.card-dettes h3 { color: #1565c0; }
+
+/* Stats */
+.devis-stats {
+    display: flex;
+    gap: 24px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.stat-value.blue { color: var(--blue); }
+.stat-value.orange { color: var(--orange); }
+.stat-value.red { color: var(--red); }
+.stat-value.green { color: var(--green); }
+
+/* Factures list */
+.factures-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.facture-row {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 12px;
+    gap: 8px;
+}
+
+.facture-row:last-child {
+    border-bottom: none;
+}
+
+.facture-ref {
+    color: var(--blue);
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.facture-ref:hover {
+    text-decoration: underline;
+}
+
+.facture-client {
+    flex: 1;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.facture-amount {
+    font-weight: 600;
+    text-align: right;
+    min-width: 80px;
+}
+
+/* ===== DASHBOARD BOTTOM ===== */
+.dashboard-bottom {
+    display: flex;
+    gap: 16px;
+}
+
+.card-half {
+    flex: 1;
+}
+
+/* ===== SUMMARY CARDS ===== */
+.stock-summary,
+.finance-summary,
+.ventes-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: var(--transition);
+}
+
+.summary-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.summary-card i {
+    font-size: 28px;
+    color: var(--primary);
+}
+
+.summary-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+}
+
+.summary-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 500;
+}
