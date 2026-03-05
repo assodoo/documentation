@@ -84,6 +84,12 @@
                             <i class="bi bi-file-earmark-text me-1"></i>Factures
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'parametres' in request.endpoint|default('') %}active{% endif %}"
+                           href="{{ url_for('page_parametres') }}">
+                            <i class="bi bi-gear me-1"></i>Paramètres
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

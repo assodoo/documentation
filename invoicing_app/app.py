@@ -1,11 +1,17 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///invoicing.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'dev-secret-key-facturation'
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2 Mo max upload
+
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 db = SQLAlchemy(app)
 
@@ -29,6 +35,7 @@ class Facture(db.Model):
     numero = db.Column(db.String(20), unique=True, nullable=False)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
     date_facture = db.Column(db.Date, default=date.today)
+    appliquer_tva = db.Column(db.Boolean, default=True)
     total_ht = db.Column(db.Float, default=0.0)
     total_tva = db.Column(db.Float, default=0.0)
     total_ttc = db.Column(db.Float, default=0.0)
@@ -46,6 +53,15 @@ class LigneFacture(db.Model):
     montant_ht = db.Column(db.Float, nullable=False)
 
 
+class Parametres(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nom_entreprise = db.Column(db.String(200), default='Votre Entreprise')
+    adresse = db.Column(db.Text, default='')
+    telephone = db.Column(db.String(50), default='')
+    email = db.Column(db.String(200), default='')
+    logo_path = db.Column(db.String(300), default='')
+
+
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def generer_numero_facture():
@@ -60,11 +76,32 @@ def generer_numero_facture():
     return f'FAC-{year}-{seq:04d}'
 
 
+def get_parametres():
+    params = Parametres.query.first()
+    if not params:
+        params = Parametres()
+        db.session.add(params)
+        db.session.commit()
+    return params
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.template_filter('fcfa')
 def formater_fcfa(value):
     if value is None:
         return '0 FCFA'
     return f'{value:,.0f} FCFA'.replace(',', ' ')
+
+
+@app.context_processor
+def inject_parametres():
+    try:
+        return dict(parametres=get_parametres())
+    except Exception:
+        return dict(parametres=None)
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
@@ -144,11 +181,13 @@ def nouvelle_facture():
         client_id = request.form['client_id']
         date_str = request.form.get('date_facture', '')
         date_facture = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else date.today()
+        appliquer_tva = request.form.get('appliquer_tva') == '1'
 
         facture = Facture(
             numero=generer_numero_facture(),
             client_id=client_id,
             date_facture=date_facture,
+            appliquer_tva=appliquer_tva,
         )
         db.session.add(facture)
         db.session.flush()
@@ -175,8 +214,12 @@ def nouvelle_facture():
             db.session.add(ligne)
 
         facture.total_ht = round(total_ht, 0)
-        facture.total_tva = round(total_ht * TAUX_TVA, 0)
-        facture.total_ttc = round(total_ht + total_ht * TAUX_TVA, 0)
+        if appliquer_tva:
+            facture.total_tva = round(total_ht * TAUX_TVA, 0)
+            facture.total_ttc = round(total_ht + total_ht * TAUX_TVA, 0)
+        else:
+            facture.total_tva = 0
+            facture.total_ttc = round(total_ht, 0)
         db.session.commit()
         flash(f'Facture {facture.numero} créée avec succès.', 'success')
         return redirect(url_for('detail_facture', id=facture.id))
@@ -198,6 +241,43 @@ def supprimer_facture(id):
     db.session.commit()
     flash(f'Facture {facture.numero} supprimée.', 'success')
     return redirect(url_for('liste_factures'))
+
+
+# ── Paramètres ──
+
+@app.route('/parametres', methods=['GET', 'POST'])
+def page_parametres():
+    params = get_parametres()
+    if request.method == 'POST':
+        params.nom_entreprise = request.form.get('nom_entreprise', '').strip()
+        params.adresse = request.form.get('adresse', '').strip()
+        params.telephone = request.form.get('telephone', '').strip()
+        params.email = request.form.get('email', '').strip()
+
+        logo = request.files.get('logo')
+        if logo and logo.filename and allowed_file(logo.filename):
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            # Supprimer l'ancien logo
+            if params.logo_path:
+                old_path = os.path.join(app.root_path, 'static', params.logo_path)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+            ext = logo.filename.rsplit('.', 1)[1].lower()
+            filename = f'logo.{ext}'
+            logo.save(os.path.join(UPLOAD_FOLDER, filename))
+            params.logo_path = f'uploads/{filename}'
+
+        if request.form.get('supprimer_logo') == '1' and params.logo_path:
+            old_path = os.path.join(app.root_path, 'static', params.logo_path)
+            if os.path.exists(old_path):
+                os.remove(old_path)
+            params.logo_path = ''
+
+        db.session.commit()
+        flash('Paramètres enregistrés avec succès.', 'success')
+        return redirect(url_for('page_parametres'))
+
+    return render_template('parametres.html', params=params)
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────

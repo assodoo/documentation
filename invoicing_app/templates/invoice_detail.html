@@ -2,6 +2,115 @@
 {% block title %}Facture {{ facture.numero }} — Facturation{% endblock %}
 
 {% block content %}
+<style>
+    #invoicePrint {
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .invoice-banner {
+        background: linear-gradient(135deg, #1A3C6E 0%, #2A5298 100%);
+        color: #fff;
+        padding: 2rem 2.5rem;
+    }
+    .invoice-banner h2 {
+        font-weight: 800;
+        letter-spacing: 3px;
+        margin: 0;
+    }
+    .invoice-badge {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 6px;
+        padding: 0.4rem 1rem;
+        font-size: 0.95rem;
+        display: inline-block;
+    }
+    .invoice-body {
+        padding: 2rem 2.5rem;
+    }
+    .section-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #6c757d;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .company-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1A3C6E;
+    }
+    .client-box {
+        background: #f8f9fc;
+        border-left: 4px solid #1A3C6E;
+        padding: 1rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+    }
+    .invoice-table thead th {
+        background: #1A3C6E !important;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.8rem;
+        border: none;
+    }
+    .invoice-table tbody td {
+        padding: 0.75rem 0.8rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .invoice-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .totals-box {
+        background: #f8f9fc;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+    }
+    .total-final {
+        background: #1A3C6E;
+        color: #fff;
+        border-radius: 6px;
+        padding: 0.6rem 1rem;
+        margin-top: 0.5rem;
+    }
+    .invoice-footer {
+        background: #f8f9fc;
+        border-top: 1px solid #e9ecef;
+        padding: 1.2rem 2.5rem;
+        text-align: center;
+    }
+    .invoice-footer p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    .exoneree-badge {
+        background: #e9ecef;
+        color: #495057;
+        border-radius: 4px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .company-logo {
+        max-height: 70px;
+        max-width: 180px;
+    }
+    @media print {
+        #invoicePrint { box-shadow: none !important; }
+        .invoice-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .invoice-table thead th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .total-final { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .client-box, .totals-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-lg-9">
         <div class="d-flex justify-content-between align-items-center mb-3 no-print">
@@ -9,64 +118,83 @@
                 <i class="bi bi-arrow-left me-1"></i>Retour
             </a>
             <button onclick="window.print()" class="btn btn-primary btn-sm">
-                <i class="bi bi-printer me-1"></i>Imprimer
+                <i class="bi bi-printer me-1"></i>Imprimer / PDF
             </button>
         </div>
 
         <div class="card" id="invoicePrint">
-            <div class="card-body p-4">
-                <!-- En-tête -->
-                <div class="row mb-4">
-                    <div class="col-6">
-                        <h3 style="color: #1A3C6E; font-weight: 700;">FACTURE</h3>
-                        <p class="mb-0"><strong>N° :</strong> {{ facture.numero }}</p>
-                        <p><strong>Date :</strong> {{ facture.date_facture.strftime('%d/%m/%Y') }}</p>
-                    </div>
-                    <div class="col-6 text-end">
-                        <h5 style="color: #1A3C6E;">Votre Entreprise</h5>
-                        <p class="text-muted mb-0">Adresse de l'entreprise</p>
-                        <p class="text-muted mb-0">Téléphone</p>
-                        <p class="text-muted">Email</p>
+            <!-- Bandeau supérieur -->
+            <div class="invoice-banner d-flex justify-content-between align-items-center">
+                <div>
+                    <h2>FACTURE</h2>
+                </div>
+                <div class="text-end">
+                    <div class="invoice-badge mb-1">N° {{ facture.numero }}</div>
+                    <div style="font-size:0.9rem; opacity:0.85; margin-top:0.3rem;">
+                        <i class="bi bi-calendar3 me-1"></i>{{ facture.date_facture.strftime('%d/%m/%Y') }}
                     </div>
                 </div>
+            </div>
 
-                <hr>
-
-                <!-- Client -->
+            <div class="invoice-body">
+                <!-- En-tête : Logo + Entreprise / Client -->
                 <div class="row mb-4">
                     <div class="col-6">
-                        <h6 class="text-muted text-uppercase">Facturer à :</h6>
-                        <p class="fw-bold mb-1">{{ facture.client.nom }}</p>
-                        {% if facture.client.adresse %}
-                        <p class="mb-1">{{ facture.client.adresse }}</p>
+                        <div class="section-title">De</div>
+                        {% if parametres and parametres.logo_path %}
+                        <div class="mb-2">
+                            <img src="{{ url_for('static', filename=parametres.logo_path) }}"
+                                 alt="Logo" class="company-logo">
+                        </div>
                         {% endif %}
-                        {% if facture.client.telephone %}
-                        <p class="mb-1">Tél : {{ facture.client.telephone }}</p>
+                        <div class="company-name">
+                            {{ parametres.nom_entreprise if parametres and parametres.nom_entreprise else 'Votre Entreprise' }}
+                        </div>
+                        {% if parametres and parametres.adresse %}
+                        <p class="text-muted mb-0 small">{{ parametres.adresse }}</p>
                         {% endif %}
-                        {% if facture.client.email %}
-                        <p class="mb-0">{{ facture.client.email }}</p>
+                        {% if parametres and parametres.telephone %}
+                        <p class="text-muted mb-0 small"><i class="bi bi-telephone me-1"></i>{{ parametres.telephone }}</p>
                         {% endif %}
+                        {% if parametres and parametres.email %}
+                        <p class="text-muted mb-0 small"><i class="bi bi-envelope me-1"></i>{{ parametres.email }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-6">
+                        <div class="section-title">Facturer à</div>
+                        <div class="client-box">
+                            <p class="fw-bold mb-1" style="color:#1A3C6E;">{{ facture.client.nom }}</p>
+                            {% if facture.client.adresse %}
+                            <p class="mb-1 small">{{ facture.client.adresse }}</p>
+                            {% endif %}
+                            {% if facture.client.telephone %}
+                            <p class="mb-1 small"><i class="bi bi-telephone me-1"></i>{{ facture.client.telephone }}</p>
+                            {% endif %}
+                            {% if facture.client.email %}
+                            <p class="mb-0 small"><i class="bi bi-envelope me-1"></i>{{ facture.client.email }}</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
 
                 <!-- Lignes de facture -->
-                <div class="table-responsive">
-                    <table class="table">
+                <div class="table-responsive mb-4">
+                    <table class="table invoice-table mb-0">
                         <thead>
                             <tr>
-                                <th>Description</th>
-                                <th class="text-end">Quantité</th>
-                                <th class="text-end">Prix unitaire</th>
-                                <th class="text-end">Montant HT</th>
+                                <th style="width:45%">Description</th>
+                                <th class="text-center" style="width:12%">Qté</th>
+                                <th class="text-end" style="width:20%">Prix unitaire</th>
+                                <th class="text-end" style="width:23%">Montant HT</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for ligne in facture.lignes %}
                             <tr>
                                 <td>{{ ligne.description }}</td>
-                                <td class="text-end">{{ ligne.quantite|int if ligne.quantite == ligne.quantite|int else ligne.quantite }}</td>
+                                <td class="text-center">{{ ligne.quantite|int if ligne.quantite == ligne.quantite|int else ligne.quantite }}</td>
                                 <td class="text-end">{{ ligne.prix_unitaire|fcfa }}</td>
-                                <td class="text-end">{{ ligne.montant_ht|fcfa }}</td>
+                                <td class="text-end fw-semibold">{{ ligne.montant_ht|fcfa }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -76,30 +204,37 @@
                 <!-- Totaux -->
                 <div class="row justify-content-end">
                     <div class="col-md-5">
-                        <table class="table table-sm mb-0">
-                            <tr>
-                                <td class="text-end border-0">Total HT :</td>
-                                <td class="text-end border-0 fw-semibold">{{ facture.total_ht|fcfa }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-end border-0">TVA (18%) :</td>
-                                <td class="text-end border-0">{{ facture.total_tva|fcfa }}</td>
-                            </tr>
-                            <tr style="border-top: 2px solid #1A3C6E;">
-                                <td class="text-end fw-bold" style="font-size:1.1rem;">Total TTC :</td>
-                                <td class="text-end fw-bold" style="font-size:1.1rem; color:#1A3C6E;">
-                                    {{ facture.total_ttc|fcfa }}
-                                </td>
-                            </tr>
-                        </table>
+                        <div class="totals-box">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total HT</span>
+                                <span class="fw-semibold">{{ facture.total_ht|fcfa }}</span>
+                            </div>
+                            {% if facture.appliquer_tva %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>TVA (18%)</span>
+                                <span>{{ facture.total_tva|fcfa }}</span>
+                            </div>
+                            {% else %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>TVA</span>
+                                <span class="exoneree-badge">Exonérée</span>
+                            </div>
+                            {% endif %}
+                            <div class="total-final d-flex justify-content-between">
+                                <span class="fw-bold">Total TTC</span>
+                                <span class="fw-bold" style="font-size:1.15rem;">{{ facture.total_ttc|fcfa }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Pied de facture -->
-                <hr class="mt-4">
-                <p class="text-muted text-center small">
-                    Merci pour votre confiance. Paiement attendu sous 30 jours.
-                </p>
+            <!-- Pied de facture -->
+            <div class="invoice-footer">
+                <p><i class="bi bi-info-circle me-1"></i>Merci pour votre confiance. Paiement attendu sous 30 jours.</p>
+                {% if not facture.appliquer_tva %}
+                <p class="mt-1" style="font-size:0.8rem;">Facture exonérée de TVA conformément à la réglementation en vigueur.</p>
+                {% endif %}
             </div>
         </div>
     </div>

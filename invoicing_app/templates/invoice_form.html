@@ -17,7 +17,7 @@
                 {% else %}
                 <form method="POST" id="invoiceForm">
                     <div class="row mb-4">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label for="client_id" class="form-label">Client <span class="text-danger">*</span></label>
                             <select class="form-select" id="client_id" name="client_id" required>
                                 <option value="">— Sélectionner un client —</option>
@@ -30,6 +30,17 @@
                             <label for="date_facture" class="form-label">Date</label>
                             <input type="date" class="form-control" id="date_facture" name="date_facture"
                                    value="{{ today.strftime('%Y-%m-%d') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label d-block">TVA</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" id="tvaSwitch" checked
+                                       style="width: 3em; height: 1.5em;">
+                                <label class="form-check-label ms-2" for="tvaSwitch" id="tvaLabel">
+                                    TVA appliquée (18%)
+                                </label>
+                            </div>
+                            <input type="hidden" name="appliquer_tva" id="appliquer_tva" value="1">
                         </div>
                     </div>
 
@@ -78,9 +89,14 @@
                                     <td class="text-end">Total HT :</td>
                                     <td class="text-end fw-semibold" id="totalHT">0 FCFA</td>
                                 </tr>
-                                <tr>
+                                <tr id="rowTVA">
                                     <td class="text-end">TVA (18%) :</td>
                                     <td class="text-end" id="totalTVA">0 FCFA</td>
+                                </tr>
+                                <tr id="rowExoneree" style="display:none;">
+                                    <td class="text-end" colspan="2">
+                                        <span class="badge bg-secondary">Exonérée de TVA</span>
+                                    </td>
                                 </tr>
                                 <tr class="table-active">
                                     <td class="text-end fw-bold">Total TTC :</td>
@@ -110,6 +126,27 @@ function formatFCFA(n) {
     return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA';
 }
 
+const tvaSwitch = document.getElementById('tvaSwitch');
+const tvaHidden = document.getElementById('appliquer_tva');
+const tvaLabel = document.getElementById('tvaLabel');
+const rowTVA = document.getElementById('rowTVA');
+const rowExoneree = document.getElementById('rowExoneree');
+
+tvaSwitch.addEventListener('change', function() {
+    if (this.checked) {
+        tvaHidden.value = '1';
+        tvaLabel.textContent = 'TVA appliquée (18%)';
+        rowTVA.style.display = '';
+        rowExoneree.style.display = 'none';
+    } else {
+        tvaHidden.value = '0';
+        tvaLabel.textContent = 'Sans TVA';
+        rowTVA.style.display = 'none';
+        rowExoneree.style.display = '';
+    }
+    recalculate();
+});
+
 function recalculate() {
     let totalHT = 0;
     document.querySelectorAll('.ligne-row').forEach(row => {
@@ -119,7 +156,8 @@ function recalculate() {
         totalHT += montant;
         row.querySelector('.montant-ht').textContent = formatFCFA(montant);
     });
-    const tva = totalHT * 0.18;
+    const applyTVA = tvaSwitch.checked;
+    const tva = applyTVA ? totalHT * 0.18 : 0;
     document.getElementById('totalHT').textContent = formatFCFA(totalHT);
     document.getElementById('totalTVA').textContent = formatFCFA(tva);
     document.getElementById('totalTTC').textContent = formatFCFA(totalHT + tva);
