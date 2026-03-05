@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Facture {{ facture.numero }} — Facturation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+            <a href="{{ url_for('liste_factures') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>Retour
+            </a>
+            <button onclick="window.print()" class="btn btn-primary btn-sm">
+                <i class="bi bi-printer me-1"></i>Imprimer
+            </button>
+        </div>
+
+        <div class="card" id="invoicePrint">
+            <div class="card-body p-4">
+                <!-- En-tête -->
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h3 style="color: #1A3C6E; font-weight: 700;">FACTURE</h3>
+                        <p class="mb-0"><strong>N° :</strong> {{ facture.numero }}</p>
+                        <p><strong>Date :</strong> {{ facture.date_facture.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <h5 style="color: #1A3C6E;">Votre Entreprise</h5>
+                        <p class="text-muted mb-0">Adresse de l'entreprise</p>
+                        <p class="text-muted mb-0">Téléphone</p>
+                        <p class="text-muted">Email</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Client -->
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h6 class="text-muted text-uppercase">Facturer à :</h6>
+                        <p class="fw-bold mb-1">{{ facture.client.nom }}</p>
+                        {% if facture.client.adresse %}
+                        <p class="mb-1">{{ facture.client.adresse }}</p>
+                        {% endif %}
+                        {% if facture.client.telephone %}
+                        <p class="mb-1">Tél : {{ facture.client.telephone }}</p>
+                        {% endif %}
+                        {% if facture.client.email %}
+                        <p class="mb-0">{{ facture.client.email }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Lignes de facture -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-end">Quantité</th>
+                                <th class="text-end">Prix unitaire</th>
+                                <th class="text-end">Montant HT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ligne in facture.lignes %}
+                            <tr>
+                                <td>{{ ligne.description }}</td>
+                                <td class="text-end">{{ ligne.quantite|int if ligne.quantite == ligne.quantite|int else ligne.quantite }}</td>
+                                <td class="text-end">{{ ligne.prix_unitaire|fcfa }}</td>
+                                <td class="text-end">{{ ligne.montant_ht|fcfa }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totaux -->
+                <div class="row justify-content-end">
+                    <div class="col-md-5">
+                        <table class="table table-sm mb-0">
+                            <tr>
+                                <td class="text-end border-0">Total HT :</td>
+                                <td class="text-end border-0 fw-semibold">{{ facture.total_ht|fcfa }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-end border-0">TVA (18%) :</td>
+                                <td class="text-end border-0">{{ facture.total_tva|fcfa }}</td>
+                            </tr>
+                            <tr style="border-top: 2px solid #1A3C6E;">
+                                <td class="text-end fw-bold" style="font-size:1.1rem;">Total TTC :</td>
+                                <td class="text-end fw-bold" style="font-size:1.1rem; color:#1A3C6E;">
+                                    {{ facture.total_ttc|fcfa }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pied de facture -->
+                <hr class="mt-4">
+                <p class="text-muted text-center small">
+                    Merci pour votre confiance. Paiement attendu sous 30 jours.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

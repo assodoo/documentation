@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Clients — Facturation{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Clients</h2>
+    <a href="{{ url_for('nouveau_client') }}" class="btn btn-primary">
+        <i class="bi bi-person-plus me-1"></i>Nouveau client
+    </a>
+</div>
+
+{% if clients %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Factures</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clients %}
+                <tr>
+                    <td class="fw-semibold">{{ c.nom }}</td>
+                    <td>{{ c.email or '—' }}</td>
+                    <td>{{ c.telephone or '—' }}</td>
+                    <td>{{ c.factures|length }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('modifier_client', id=c.id) }}" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </a>
+                        <form action="{{ url_for('supprimer_client', id=c.id) }}" method="POST" class="d-inline"
+                              onsubmit="return confirm('Supprimer ce client ?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center text-muted py-5">
+    <i class="bi bi-people" style="font-size: 3rem;"></i>
+    <p class="mt-2">Aucun client enregistré.</p>
+    <a href="{{ url_for('nouveau_client') }}" class="btn btn-primary">Créer un client</a>
+</div>
+{% endif %}
+{% endblock %}

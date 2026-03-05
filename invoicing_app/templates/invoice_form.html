@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Nouvelle facture — Facturation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header bg-navy">
+                <i class="bi bi-file-earmark-plus me-1"></i>Nouvelle facture
+            </div>
+            <div class="card-body">
+                {% if not clients %}
+                <div class="alert alert-warning">
+                    Aucun client enregistré.
+                    <a href="{{ url_for('nouveau_client') }}">Créez d'abord un client</a>.
+                </div>
+                {% else %}
+                <form method="POST" id="invoiceForm">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="client_id" class="form-label">Client <span class="text-danger">*</span></label>
+                            <select class="form-select" id="client_id" name="client_id" required>
+                                <option value="">— Sélectionner un client —</option>
+                                {% for c in clients %}
+                                <option value="{{ c.id }}">{{ c.nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date_facture" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date_facture" name="date_facture"
+                                   value="{{ today.strftime('%Y-%m-%d') }}">
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3">Lignes de facture</h5>
+                    <div class="table-responsive">
+                        <table class="table" id="lignesTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:40%">Description</th>
+                                    <th style="width:15%">Quantité</th>
+                                    <th style="width:20%">Prix unitaire (FCFA)</th>
+                                    <th style="width:20%" class="text-end">Montant HT</th>
+                                    <th style="width:5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="lignesBody">
+                                <tr class="ligne-row">
+                                    <td>
+                                        <input type="text" class="form-control" name="descriptions" placeholder="Description" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control qte-input" name="quantites" value="1" min="0.01" step="any" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control prix-input" name="prix_unitaires" placeholder="0" min="0" step="any" required>
+                                    </td>
+                                    <td class="text-end align-middle montant-ht">0 FCFA</td>
+                                    <td class="align-middle">
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-remove" title="Supprimer">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary btn-sm mb-4" id="btnAddLine">
+                        <i class="bi bi-plus-circle me-1"></i>Ajouter une ligne
+                    </button>
+
+                    <div class="row justify-content-end">
+                        <div class="col-md-5">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="text-end">Total HT :</td>
+                                    <td class="text-end fw-semibold" id="totalHT">0 FCFA</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-end">TVA (18%) :</td>
+                                    <td class="text-end" id="totalTVA">0 FCFA</td>
+                                </tr>
+                                <tr class="table-active">
+                                    <td class="text-end fw-bold">Total TTC :</td>
+                                    <td class="text-end fw-bold" id="totalTTC">0 FCFA</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{{ url_for('liste_factures') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Créer la facture
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function formatFCFA(n) {
+    return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA';
+}
+
+function recalculate() {
+    let totalHT = 0;
+    document.querySelectorAll('.ligne-row').forEach(row => {
+        const qte = parseFloat(row.querySelector('.qte-input').value) || 0;
+        const prix = parseFloat(row.querySelector('.prix-input').value) || 0;
+        const montant = qte * prix;
+        totalHT += montant;
+        row.querySelector('.montant-ht').textContent = formatFCFA(montant);
+    });
+    const tva = totalHT * 0.18;
+    document.getElementById('totalHT').textContent = formatFCFA(totalHT);
+    document.getElementById('totalTVA').textContent = formatFCFA(tva);
+    document.getElementById('totalTTC').textContent = formatFCFA(totalHT + tva);
+}
+
+document.getElementById('btnAddLine').addEventListener('click', function() {
+    const tbody = document.getElementById('lignesBody');
+    const firstRow = tbody.querySelector('.ligne-row');
+    const newRow = firstRow.cloneNode(true);
+    newRow.querySelector('[name="descriptions"]').value = '';
+    newRow.querySelector('.qte-input').value = '1';
+    newRow.querySelector('.prix-input').value = '';
+    newRow.querySelector('.montant-ht').textContent = '0 FCFA';
+    tbody.appendChild(newRow);
+    attachEvents(newRow);
+});
+
+function attachEvents(row) {
+    row.querySelector('.qte-input').addEventListener('input', recalculate);
+    row.querySelector('.prix-input').addEventListener('input', recalculate);
+    row.querySelector('.btn-remove').addEventListener('click', function() {
+        if (document.querySelectorAll('.ligne-row').length > 1) {
+            row.remove();
+            recalculate();
+        }
+    });
+}
+
+document.querySelectorAll('.ligne-row').forEach(attachEvents);
+</script>
+{% endblock %}
