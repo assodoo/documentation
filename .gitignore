@@ -8,3 +8,6 @@ _build/
 
 # Dependencies
 odoo
+
+# Flask instance folder (SQLite DB, runtime data)
+invoicing_app/instance/
